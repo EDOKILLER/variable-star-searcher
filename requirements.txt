@@ -1,0 +1,7 @@
+# Python packages used by the program (versions tested: numpy 2.3, scipy 1.16, astropy 7.2, matplotlib 3.10)
+astropy
+astroquery
+matplotlib
+numpy
+scipy
+transitleastsquares

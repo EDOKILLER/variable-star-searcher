@@ -1,0 +1,84 @@
+VARIABLE STAR SEARCHER 1.2 - SERVIZIO PER IL NAS UGREEN (DXP4800 GT)
+====================================================================
+© 2026 Edoardo Battistel
+
+Cerca stelle variabili NON ancora catalogate nelle curve di luce di TESS
+(curve a 2 minuti e immagini a campo intero), Kepler e K2, sempre sul NAS,
+a priorità minima, come Exoplanet Searcher:
+  - 1 thread su 8 e al massimo 3 GB di RAM (la ricerca delle variabili è
+    leggera: il tempo lo passa soprattutto ad aspettare i download).
+    Con Exoplanet Searcher (4 thread) ed Einstein@Home (2) resta sempre
+    almeno 1 thread libero, e tutti hanno la priorità più bassa;
+  - se manca Internet aspetta e riprova;
+  - i FITS vengono cancellati dopo ogni stella.
+
+NOVITÀ DELLA 1.2 (7 novembre 2026)
+  HEASARC non accetta più il formato "votable/td": ora il programma chiede
+  CSV o VOTable e prova da solo il formato giusto. Per aggiornare dalla 1.1
+  basta sostituire motore_var.py sul NAS e riavviare il container.
+
+1. COPIA I FILE SUL NAS
+-----------------------
+  Nella cartella condivisa "Ugreen NAS" crea  Variable_Star_Searcher/programma
+  e copiaci i 5 file della cartella "nas":
+      servizio_var.py  motore_var.py  motore_exo.py  avvia.sh  requisiti.txt
+  (motore_exo.py è una copia di quello di Exoplanet Searcher 1.1 con qualche
+   aggiunta: lascia quello di Exoplanet Searcher dov'è.)
+
+2. CREA IL PROGETTO NELL'APP DOCKER
+-----------------------------------
+  App Docker -> Progetto -> Crea, nome: variable-star-searcher
+  Incolla docker-compose.yml (il percorso è già "/volume1/Ugreen NAS/Variable_Star_Searcher")
+  e Distribuisci. Al primo avvio installa le librerie (5-10 minuti).
+  Nel Registro del container: "Catalogo AAVSO VSX (HEASARC) raggiungibile: sì",
+  poi le righe dei settori TESS.
+
+3. GUARDA I RISULTATI (dal PC, dal telefono o dal tablet)
+---------------------------------------------------------
+  Nella cartella Variable_Star_Searcher apri  risultati.html  con un doppio clic:
+  una pagina con tutte le variabili nuove (grafico, tipo, periodo, magnitudini)
+  e i link al modulo VSX e alla scheda PDF. Si aggiorna da sola.
+  Altri file:
+    variabili/<stella>/grafici.png        curva di luce, curva ripiegata, periodogramma
+    variabili/<stella>/scheda.pdf         la stessa scheda in PDF (in inglese)
+    variabili/<stella>/vsx_submission.txt i campi del modulo VSX, pronti da copiare
+    vsx_da_inviare.csv                    tutti i campi VSX in una tabella
+    riassunto_stelle.csv                  ogni stella analizzata (costante, già in VSX, NUOVA)
+    registro.txt                          cronologia
+
+4. COME SI INVIA UNA VARIABILE AD AAVSO VSX
+-------------------------------------------
+  Le schede seguono già le regole del manuale di VSX: nome dal catalogo migliore
+  (HIP, Tycho-2, 2MASS, altrimenti TIC), coordinate Gaia dal catalogo TIC, epoca
+  in HJD con 4 decimali (al minimo per binarie e stelle che ruotano, al massimo
+  per le pulsanti), periodo con le sole cifre significative, nota sulle stelle
+  vicine che possono mescolare la luce (obbligatoria con i pixel grandi di TESS),
+  due allegati separati (curva di luce e curva ripiegata).
+  1) Accedi a https://vsx.aavso.org con il tuo account AAVSO (non serve un
+     observer code né registrare un'attrezzatura).
+  2) Apri risultati.html: le variabili sono in ordine di QUALITÀ, dalla più
+     solida. VSX accetta UNA SOLA segnalazione al giorno: parti dalla prima.
+  3) Guarda allegato 1 e allegato 2: la variazione deve essere chiara e
+     ripetuta. Leggi la nota "Possible blending": se c'è una stella vicina
+     luminosa la variabilità potrebbe essere sua.
+  4) Apri il modulo per una nuova variabile ("New Star"), copia i campi da
+     vsx_submission.txt e allega curva_luce.png e fase.png (due file per
+     salvataggio). Nel menu del tipo scegli quello indicato ("Type"; i due
+     punti ":" vogliono dire incerto). Nella banda scegli TESS (o Kp per Kepler/K2).
+  5) Salva e invia. Un moderatore controlla; le segnalazioni incomplete
+     vengono cancellate dopo 60 giorni.
+
+5. OPZIONI (var_config.json nella cartella Variable_Star_Searcher)
+------------------------------------------------------------------
+  "missioni": TESS 2 min, TESS immagini a campo intero, Kepler, K2 (true/false)
+  "mag_ffi": 14.0     magnitudine massima per le immagini a campo intero
+  "paralleli": 3      stelle scaricate insieme
+  Dopo una modifica: app Docker -> Container -> variable-star-searcher -> Riavvia.
+
+Tipi proposti (classificazione automatica: è un suggerimento)
+------------------------------------------------------------
+  EA  binaria a eclisse tipo Algol     EB  tipo Beta Lyrae     EW  tipo W UMa
+  ELL ellissoidale                     RRAB, RRC  RR Lyrae     DSCT, HADS  Delta Scuti
+  GDOR Gamma Doradus                   ROT stella con macchie che ruota
+  BY  nana con macchie (tipo BY Draconis)   UV  stella con brillamenti (UV Ceti)
+  VAR variabile di tipo non chiaro     ":" dopo il tipo = tipo incerto

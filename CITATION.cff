@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below, and credit the data providers listed in README.md."
+title: "Variable Star Searcher: find uncatalogued variable stars in TESS, Kepler and K2 light curves, on a home server"
+authors:
+  - family-names: Battistel
+    given-names: Edoardo
+version: "1.2"
+date-released: 2026-11-07
+license: BSD-3-Clause
+repository-code: "https://github.com/EDOKILLER/variable-star-searcher"
+keywords:
+  - variable stars
+  - TESS
+  - Kepler
+  - K2
+  - AAVSO
+  - VSX

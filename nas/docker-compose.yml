@@ -1,0 +1,23 @@
+# Variable Star Searcher 1.0 - servizio per NAS UGREEN (app Docker -> Progetto -> Crea)
+# © 2026 Edoardo Battistel
+services:
+  variable-star-searcher:
+    image: python:3.12
+    container_name: variable-star-searcher
+    restart: unless-stopped
+    command: ["bash", "/dati/programma/avvia.sh"]
+    volumes:
+      - "/volume1/Ugreen NAS/Variable_Star_Searcher:/dati"
+    environment:
+      - TZ=Europe/Rome
+    # --- per non rallentare il NAS: la ricerca delle variabili è leggera, aspetta soprattutto i download ---
+    cpus: 1.0              # al massimo 1 thread su 8
+    cpu_shares: 2
+    mem_limit: 3g
+    blkio_config:
+      weight: 10
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"

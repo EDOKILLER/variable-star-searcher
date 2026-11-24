@@ -1,0 +1,42 @@
+VARIABLE STAR SEARCHER 1.2 - ricerca automatica di stelle variabili nuove
+=========================================================================
+© 2026 Edoardo Battistel
+
+Programma separato da Exoplanet Searcher, pensato per girare sul NAS.
+Istruzioni complete in nas/LEGGIMI_NAS.txt.
+
+Come lavora, per ogni stella:
+  1. scarica la curva di luce (TESS, Kepler, K2 da MAST), come Exoplanet Searcher;
+  2. periodogramma di Lomb-Scargle; se ripiegando sul periodo doppio i punti si
+     allineano meglio (succede con le binarie a eclisse e le RR Lyrae), usa il doppio;
+  3. controlli: probabilità di falso allarme < 1e-8, ampiezza >= 5 millimagnitudini,
+     segnale ben sopra il rumore, niente periodi tipici dei difetti di TESS
+     (orbita di 13,7 giorni) né tendenze lente;
+  4. tipo VSX proposto dalla forma della curva (eclissi, salita rapida delle
+     pulsanti, minimi uguali o diversi, periodo, temperatura della stella);
+  5. brillamenti nelle curve a cadenza breve, cercati dopo aver tolto la
+     variazione periodica;
+  6. confronto con AAVSO VSX (copia aggiornata su HEASARC): se c'è già una
+     variabile entro 40", la stella viene saltata;
+  7. variabile nuova: grafici, scheda PDF e modulo VSX in inglese, riga in
+     vsx_da_inviare.csv, pagina risultati.html aggiornata.
+
+Novità della 1.1 (regole del manuale di AAVSO VSX)
+--------------------------------------------------
+  - nome dal catalogo migliore (HIP, Tycho-2, 2MASS, poi TIC) e coordinate Gaia dal TIC;
+  - epoca in HJD (non BJD) con 4 decimali; minimo anche per le stelle che ruotano;
+  - periodo con le sole cifre significative; durata solo per EA e pulsanti asimmetriche;
+  - nota obbligatoria sulle stelle vicine entro 2 pixel di TESS (blending);
+  - due allegati separati per VSX: curva_luce.png e fase.png;
+  - punteggio di qualità: risultati.html mette prima le più solide
+    (VSX accetta una sola segnalazione al giorno).
+
+File
+----
+  nas/servizio_var.py   il servizio (senza finestra)
+  nas/motore_var.py     analisi delle variabili, catalogo VSX, schede
+  nas/motore_exo.py     elenchi delle stelle, download, gestione della rete (da Exoplanet Searcher)
+  nas/avvia.sh, nas/requisiti.txt, nas/docker-compose.yml
+  Prova senza rete (anche sul PC, con astropy installato):  python3 nas/servizio_var.py --prova
+
+Crediti: MAST (STScI); AAVSO VSX tramite HEASARC (NASA); astropy (Lomb-Scargle).

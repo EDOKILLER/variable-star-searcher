@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+# PyInstaller output
+build/
+dist/
+*.spec
+.venv*/
+# self-test and diagnostics written when running locally
+autotest*.txt
+diagnostica*.txt
+diagnostica*.png
+compila.txt
+prova_foto_*.jpg
